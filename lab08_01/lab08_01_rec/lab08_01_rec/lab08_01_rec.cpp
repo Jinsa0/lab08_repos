@@ -1,20 +1,78 @@
-// lab08_01_rec.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// lab08_01_rec.cpp
+// Кіц Роман Романович
+// Лабораторна робота № 8.1 рек
+// Пошук та заміна символів у літерному рядку.
+// Варіант 12
 
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <cstring>
+
+using namespace std;
+
+// Рекурсивна функція підрахунку символів, що входять у слово "BASIC"
+int Count(const char* str, int i)
+{
+    if (str[i] != '\0')
+    {
+        if (str[i] == 'B' || str[i] == 'A' || str[i] == 'S' || str[i] == 'I' || str[i] == 'C')
+            return 1 + Count(str, i + 1);
+        else
+            return Count(str, i + 1);
+    }
+    return 0;
+}
+
+// Рекурсивна функція заміни "BASIC" на "Delphi"
+// Пам'ять для dest виділяється заздалегідь з урахуванням розширення
+char* Change(char* dest, const char* str, char* t, int i)
+{
+    if (str[i] != '\0' && str[i + 1] != '\0' && str[i + 2] != '\0' &&
+        str[i + 3] != '\0' && str[i + 4] != '\0')
+    {
+        if (str[i] == 'B' && str[i + 1] == 'A' && str[i + 2] == 'S' &&
+            str[i + 3] == 'I' && str[i + 4] == 'C')
+        {
+            strcat(t, "Delphi");
+            return Change(dest, str, t + 6, i + 5);
+        }
+        else
+        {
+            *t++ = str[i++];
+            *t = '\0';
+            return Change(dest, str, t, i);
+        }
+    }
+    else
+    {
+        while (str[i] != '\0')
+        {
+            *t++ = str[i++];
+        }
+        *t = '\0';
+        return dest;
+    }
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    char str[151];
+
+    cout << "Enter string:" << endl;
+    cin.getline(str, 100);
+
+    cout << "String contained " << Count(str, 0) << " characters from 'BASIC'" << endl;
+
+    // Пам'ять виділяється під максимальну потенційну довжину після заміни (100 * 6 / 5 + 1 = 121, взято 151)
+    char* dest1 = new char[151];
+    dest1[0] = '\0';
+
+    char* dest2;
+    dest2 = Change(dest1, str, dest1, 0);
+
+    cout << "Modified string (param) : " << dest1 << endl;
+    cout << "Modified string (result): " << dest2 << endl;
+
+    delete[] dest1;
+    return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
